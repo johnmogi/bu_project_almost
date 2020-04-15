@@ -37,6 +37,7 @@ router.get("/vacations/:id", async (request, response) => {
 router.post("/vacations", async (request, response) => {
   try {
     const vac = request.body;
+    console.log(vac);
     const addedVac = await vacsLogic.addVacAsync(vac);
     response.status(201).json(addedVac);
   } catch (err) {
