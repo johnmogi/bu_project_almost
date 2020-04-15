@@ -1,0 +1,1 @@
+router.get("/protected-normal-user", (request, response) => { try { if (request.session.isAdmin) { response.json({ value: "Hi, Admin" }); return; } if (!request.session.isAdmin) { response.json({ value: "you are a normal user, you also won't see this message (:" }); return; } } catch (err) { response.status(500).send(err.message); } });
