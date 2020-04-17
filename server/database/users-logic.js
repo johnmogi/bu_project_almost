@@ -16,8 +16,14 @@ async function getOneUserAsync(credentials) {
 }
 
 async function addUserAsync(user) {
+  // const checkAvailableUserName = `SELECT * from users WHERE userName = '${user.userName}'`;
+  // const runCheck = await dal.executeAsync(checkAvailableUserName);
+  // if (runCheck.length != 0) {
+  //   return 0;
+  // }
   const sql = `INSERT INTO users ( firstName, lastName, userName, password,role,  isAdmin) VALUES('${user.firstName}','${user.lastName}','${user.userName}','${user.password}',"user",0)`;
   const info = await dal.executeAsync(sql);
+
   user.id = info.insertId;
   return user;
 }
@@ -39,6 +45,7 @@ async function getFollowedVacs(id) {
   const sql = `SELECT * FROM followers 
   where userID = ${id}`;
   const vacs = await dal.executeAsync(sql);
+  console.log(vacs)
   return vacs;
 }
 async function getAllFollowedVacssAsync() {
