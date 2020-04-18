@@ -41,12 +41,11 @@ async function getAllFollowersAsync() {
   const followers = await dal.executeAsync(sql);
   return followers;
 }
-async function getFollowedVacs(id) {
-  const sql = `SELECT * FROM followers 
-  where userID = ${id}`;
-  const vacs = await dal.executeAsync(sql);
-  console.log(vacs)
-  return vacs;
+async function getFollowedVacs(vacationID, userID) {
+  console.log(vacationID, userID);
+  const sql = `INSERT INTO followers (userID,vacationID) VALUES (${userID}, ${vacationID})`;
+  const vacation = await dal.executeAsync(sql);
+  return vacation;
 }
 async function getAllFollowedVacssAsync() {
   const sql = `SELECT * FROM followers WHERE vacationID > 0`;

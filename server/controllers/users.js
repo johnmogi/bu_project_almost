@@ -30,7 +30,7 @@ router.post("/register", async (request, response) => {
     //   throw "missing details please check again";
     // }
     const newUser = await usersLogic.addUserAsync(user);
-    console.log(newUser)
+    console.log(newUser);
     if (newUser === 0) {
       throw "User name already exists";
     }
@@ -39,7 +39,10 @@ router.post("/register", async (request, response) => {
     }
     response.status(201).json(newUser);
   } catch (error) {
-    response.status(500).json(newUser).send(error.message);
+    response
+      .status(500)
+      .json(newUser)
+      .send(error.message);
   }
 });
 router.post("/login", async (request, response) => {
@@ -91,24 +94,12 @@ router.get("/followed-vacs", async (request, response) => {
     response.status(500).send(err.message);
   }
 });
-router.post("/follow", async (request, response) => {
+router.post("/follow/:vacationID/:id", async (request, response) => {
   try {
-    const lookupUser = await usersLogic.getFollowedVacs(request.body.userID);
-    // console.log(lookupUser)
-    // for (const i of lookupUser) {
-    //   if (i.vacationID === request.body.vacationID) {
-    //     // TODO reduce or prevent duplicates!
-    //     // console.log(i.vacationID + " found");
-    //     // console.log(lookupUser, i.vacationID);
-    //     const toggleUser = await usersLogic.removeFollowedVac(
-    //       request.body.userID,
-    //       request.body.vacationID
-    //     );
-    //     return 0;        // return response.status(403).send("user already follows this vacation");
-    //   }
-    // }
-    const addFollowToUser = await usersLogic.addUserFollowAsync(request.body);
-    response.status(200).send(addFollowToUser);
+    const id = +request.params.id;
+    const vacation = +request.params.vacationID;
+    const getUser = await usersLogic.getFollowedVacs(vacation, id);
+    response.json(getUser);
   } catch (error) {
     response.status(500).send(error);
   }

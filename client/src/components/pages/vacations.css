@@ -1,0 +1,15 @@
+.image-card-top {
+  max-height: 300px;
+  background: #e9ecef;
+  min-height: 300px;
+}
+
+.orange {
+  color: green;
+}
+
+.jumbotron {
+  padding: 1em;
+
+  background-color: #e9ecefd9;
+}
