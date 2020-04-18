@@ -21,7 +21,7 @@ async function addUserAsync(user) {
   // if (runCheck.length != 0) {
   //   return 0;
   // }
-  const sql = `INSERT INTO users ( firstName, lastName, userName, password,role,  isAdmin) VALUES('${user.firstName}','${user.lastName}','${user.userName}','${user.password}',"user",0)`;
+  const sql = `INSERT INTO users ( firstName, lastName, userName, password,role,  isAdmin) VALUES('${user.firstName}','${user.lastName}','${user.userName}','${user.password}',"User",0)`;
   const info = await dal.executeAsync(sql);
 
   user.id = info.insertId;
@@ -41,14 +41,14 @@ async function getAllFollowersAsync() {
   const followers = await dal.executeAsync(sql);
   return followers;
 }
-async function getFollowedVacs(vacationID, userID) {
+async function addFollowVacForUser(vacationID, userID) {
   console.log(vacationID, userID);
   const sql = `INSERT INTO followers (userID,vacationID) VALUES (${userID}, ${vacationID})`;
   const vacation = await dal.executeAsync(sql);
   return vacation;
 }
-async function getAllFollowedVacssAsync() {
-  const sql = `SELECT * FROM followers WHERE vacationID > 0`;
+async function getAllFollowedVacssAsync(id) {
+  const sql = `SELECT * FROM followers WHERE userID = ${id}`;
   const followed = await dal.executeAsync(sql);
   return followed;
 }
@@ -63,7 +63,7 @@ module.exports = {
   addUserAsync,
   addUserFollowAsync,
   getAllFollowersAsync,
-  getFollowedVacs,
+  addFollowVacForUser,
   getAllFollowedVacssAsync,
   removeFollowedVac
 };

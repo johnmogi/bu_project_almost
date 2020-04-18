@@ -86,24 +86,38 @@ router.get("/followers", async (request, response) => {
     response.status(500).send(err.message);
   }
 });
-router.get("/followed-vacs", async (request, response) => {
+router.get("/followed-vacs/:id", async (request, response) => {
+  const id = +request.params.id
   try {
-    const followed = await usersLogic.getAllFollowedVacssAsync();
+    const followed = await usersLogic.getAllFollowedVacssAsync(id);
     response.json(followed);
   } catch (err) {
     response.status(500).send(err.message);
   }
 });
-router.post("/follow/:vacationID/:id", async (request, response) => {
+router.post("/follow/", async (request, response) => {
   try {
-    const id = +request.params.id;
-    const vacation = +request.params.vacationID;
-    const getUser = await usersLogic.getFollowedVacs(vacation, id);
-    response.json(getUser);
-  } catch (error) {
-    response.status(500).send(error);
+    const userID = +request.body.userID
+    const vacationID = +request.body.vacationID
+
+    const followed = await usersLogic.addFollowVacForUser(vacationID, userID);
+    response.json(followed);
+  } catch (err) {
+    response.status(500).send(err.message);
   }
 });
+
+
+// router.post("/follow/:vacationID/:id", async (request, response) => {
+//   try {
+//     const id = +request.params.id;
+//     const vacation = +request.params.vacationID;
+//     const getUser = await usersLogic.getFollowedVacs(vacation, id);
+//     response.json(getUser);
+//   } catch (error) {
+//     response.status(500).send(error);
+//   }
+// });
 
 router.get("/follow/:id", async (request, response) => {
   try {
@@ -131,4 +145,5 @@ router.delete("/delete/:userID/:vacationID", async (request, response) => {
     response.status(500).send(error);
   }
 });
+
 module.exports = router;

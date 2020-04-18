@@ -13,14 +13,13 @@ import { VacsModel } from "../../models/vacs-model";
 import { PublicUserModel } from "../../models/user-model";
 
 import Col from "react-bootstrap/Col";
+import { toast } from "react-toastify";
 
 const PORT = process.env.PORT || 3012;
 
 interface vacationState {
   vacs: VacsModel[];
-  vacId: string;
   user: PublicUserModel;
-  ServerData: ServerData;
   vacsFollowed: VacsModel[];
 }
 export class Vacations extends Component<any, vacationState> {
@@ -29,10 +28,8 @@ export class Vacations extends Component<any, vacationState> {
   public constructor(props: any) {
     super(props);
     this.state = {
-      ServerData: new ServerData(),
       user: store.getState().user,
-      vacs: [],
-      vacId: "",
+      vacs: store.getState().vacations,
       vacsFollowed: store.getState().vacsFollowed
     };
 
@@ -50,27 +47,48 @@ export class Vacations extends Component<any, vacationState> {
     fetch(`http://localhost:${PORT}/api/vacations`)
       .then(res => res.json())
       .then(vacs => this.setState({ vacs }))
-      .catch(err => alert(err.message));
+      .catch(err => toast.error(err.message));
 
     // fetch followed:
-    const id = this.state.user.userID;
-    fetch(`http://localhost:${PORT}/api/follow/${id}`)
-      .then(res => res.json())
-      .then(vacsFollowed => this.setState({ vacsFollowed }))
-      .catch(err => alert(err.message));
-  }
-  componentDidUpdate = () => {
-    const vacationId = this.props.match.params.vacId;
-    if (vacationId !== this.state.vacId) {
-      this.componentDidMount();
+    if (this.state.user) {
+      const id = this.state.user.userID;
+      fetch(`http://localhost:${PORT}/api/auth/followed-vacs/${id}`)
+        .then(res => res.json())
+        .then(vacsFollowed => this.setState({ vacsFollowed }))
+        .catch(err => toast.error(err.message));
     }
-  };
+
+    //  const vacsFollowed= this.getState().vacsFollowed
+
+    // if (this.state.vacsFollowed.length !== 0) {
+
+    // let vacs = this.state.vacs.find(price => price > 777);
+    // console.log(vacs);
+
+    // }
+    // vacs.push(this.state.vacsFollowed)
+    // const followvacs = [];
+
+    //     for (let i = 0; i < this.state.vacsFollowed.length; i++) {
+    //       const index = vacs.findIndex((v) => v.vacationID === this.state.vacsFollowed[i].vacationID);
+    //       const vacation = vacs[index];
+    //       vacation.follow = true;
+    //       vacs.splice(index, 1);
+    //       vacs.unshift(vacation);
+    //       this.setState({ vacs: vacs });
+    //     }
+    this.resortVacs()
+
+
+  }
+  private resortVacs = () => {
+
+  }
   public render(): JSX.Element {
     return (
       <div className="vacations row">
         {this.state.vacs.map(v => (
           <Col sm={1} md={2} xl={4} key={v.vacationID}>
-            {/* <Col className="card col-4" className={classes.root}> */}
             <VacCard
               vacationID={v.vacationID}
               id={v.vacationID}
