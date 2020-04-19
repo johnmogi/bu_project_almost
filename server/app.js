@@ -10,8 +10,7 @@ const authController = require("./controllers/users");
 const vacsController = require("./controllers/vacations");
 const filesController = require("./controllers/file-upload");
 
-server.use(cors({ origin: `http://localhost:3000`, credentials: true })); // Need those exact configuration for the session cookie to be saved at client side.
-// server.use(cors()); // Need those exact configuration for the session cookie to be saved at client side.
+server.use(cors({ origin: `http://localhost:3000`, credentials: true }));
 server.use(express.json());
 server.use(
   expressSession({

@@ -5,17 +5,17 @@ import { VacsModel } from "../models/vacs-model";
 import { Unsubscribe } from "redux";
 import { store } from "../redux/store";
 
-import * as V from "victory";
+// import * as V from "victory";
 import { VictoryBar, VictoryChart, VictoryAxis } from "victory";
 import { toast } from "react-toastify";
 
 const PORT = process.env.PORT || 3012;
-const data = [
-  { quarter: 1, earnings: 13000 },
-  { quarter: 2, earnings: 16500 },
-  { quarter: 3, earnings: 14250 },
-  { quarter: 4, earnings: 19000 }
-];
+// const data = [
+//   { quarter: 1, earnings: 13000 },
+//   { quarter: 2, earnings: 16500 },
+//   { quarter: 3, earnings: 14250 },
+//   { quarter: 4, earnings: 19000 }
+// ];
 
 interface statsstate {
   user: UserModel;
@@ -50,26 +50,21 @@ export class StatsGraphs extends Component<any, statsstate> {
     } catch (err) {
       toast.error(err.message);
     }
-    try {
-      fetch(`http://localhost:${PORT}/api/auth/followed-vacs`)
-        .then(res => res.json())
-        .then(followers => this.setState({ followers }))
-        .catch(err => toast.error(err.message));
-    } catch (err) {
-      toast.error(err.message);
-    }
+    // try {
+    //   fetch(`http://localhost:${PORT}/api/auth/followed-vacs`)
+    //     .then(res => res.json())
+    //     .then(followers => this.setState({ followers }))
+    //     .catch(err => toast.error(err.message));
+    // } catch (err) {
+    //   toast.error(err.message);
+    // }
   }
   render() {
     return (
       <div className="stats">
-        <VictoryChart domainPadding={10}>
-          {/* <VictoryAxis
-            tickValues={["Quarter 1", "Quarter 2", "Quarter 3", "Quarter 4"]}
-          />
-          <VictoryAxis
-            dependentAxis
-            tickFormat={(x) => (`${x / 20}`)}
-          /> */}
+        <VictoryChart domainPadding={40}>
+          <VictoryAxis tickValues={this.state.followers} />
+          <VictoryAxis dependentAxis tickFormat={x => `${x / 5}`} />
           <VictoryBar
             data={this.state.vacsFollowed}
             x={`userID`}
@@ -79,12 +74,7 @@ export class StatsGraphs extends Component<any, statsstate> {
         <p>stats</p>
         vacsFollowed: {this.state.vacsFollowed.length}
         {this.state.vacsFollowed.map(v => (
-          <p>vacationID: {v.vacationID}</p>
-        ))}
-        <hr />
-        followers: {this.state.followers.length}
-        {this.state.followers.map(v => (
-          <p>vacationID: {v.vacationID}</p>
+          <p key={v.vacationID}>vacationID: {v.vacationID}</p>
         ))}
       </div>
     );

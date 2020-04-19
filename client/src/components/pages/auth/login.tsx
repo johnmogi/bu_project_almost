@@ -23,7 +23,6 @@ export class Login extends Component<any, LoginState> {
   public constructor(props: any) {
     super(props);
     this.state = { credentials: new CredentialsModel() };
-
     this.unsubscribe = store.subscribe(() => {
       this.setState({ credentials: store.getState().user });
     });
@@ -87,14 +86,9 @@ export class Login extends Component<any, LoginState> {
         `http://localhost:${port}/api/auth/login`,
         this.state.credentials,
         { withCredentials: true }
-      ); // { withCredentials: true } causes the cookie to be sent to server.
+      );
       const user = response.data;
-      //  toast.error(JSON.stringify(user));
       store.dispatch({ type: ActionType.Login, payload: user });
-      // if (store.getState().user.role === "") {
-      //   this.props.history.push("/login");
-      // }
-
       this.props.history.push("/vacations");
     } catch (err) {
       toast.error(err.response ? err.response.data : err.message);

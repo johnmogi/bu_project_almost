@@ -9,7 +9,6 @@ import { NotFound } from "../pages/not-found";
 import { StatsGraphs } from "../pages/stats";
 
 import { Logout } from "../pages/auth/logout";
-import { AddProduct } from "../pages/auth/add-product/add-product";
 import { EditVacation } from "../pages/auth/edit-vacation";
 
 export class Main extends Component {
@@ -25,8 +24,7 @@ export class Main extends Component {
           <Route path="/stats" component={StatsGraphs} exact />
           <Route path="/signup" component={Register} exact />
           {/* pages */}
-          <Route path="/test" component={AddProduct} exact />
-          <Route path="/edit-vacation" component={EditVacation} exact />
+          <Route path="/edit-vacation/:id" component={EditVacation} />
           <Route path="/vacations/" component={Vacations} exact />
           <Route path="" component={NotFound} exact />
         </Switch>

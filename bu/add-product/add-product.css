@@ -1,0 +1,7 @@
+.add-product > input[type="file"] {
+    display: none;
+}
+
+img {
+    width: 200px;
+}

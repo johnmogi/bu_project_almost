@@ -10,14 +10,13 @@ async function getOneVacAsync(id) {
   const user = await dal.executeAsync(sql);
   return user;
 }
-
 async function addVacAsync(vac) {
   const sql = `INSERT INTO vacations (description, destination, picFileName, startDate, endDate, price, followed) VALUES('${vac.description}','${vac.destination}','${vac.picFileName}','${vac.startDate}','${vac.endDate}','${vac.price}', 0)`;
   const info = await dal.executeAsync(sql);
   vac.id = info.insertId;
   return vac;
 }
-// update
+
 async function updateFullVacationAsync(vac) {
   const sql = `
       UPDATE vacations SET
@@ -34,10 +33,6 @@ async function updateFullVacationAsync(vac) {
 
 async function updatePartialVacAsync(vac) {
   let sql = "UPDATE vacations SET ";
-
-  // if (vac.vacationName) {
-  //   sql += `vacationName = '${vac.vacationName}',`;
-  // }
   if (vac.description) {
     sql += `description = '${vac.description}',`;
   }
@@ -56,19 +51,12 @@ async function updatePartialVacAsync(vac) {
   if (vac.price) {
     sql += `price = '${vac.price}',`;
   }
-  // Delete last comma:
+
   sql = sql.substr(0, sql.length - 1);
-
   sql += ` WHERE ProductID = ${vac.id}`;
-
   const info = await dal.executeAsync(sql);
   return info.affectedRows === 0 ? null : vac;
 }
-
-// UPDATE `vacations` SET `price` = '1600' WHERE `vacations`.`vacationID` = 1;
-// (vacationName,description, destination, picFileName, DATE_FORMAT(startDate, "%m/%d/%Y") as startDate, DATE_FORMAT(endDate, "%m/%d/%Y") as endDate, price)
-// delete for vacation
-
 async function deleteOneVacAsync(id) {
   const sql = `DELETE FROM vacations WHERE vacationID = ${id}`;
   await dal.executeAsync(sql);

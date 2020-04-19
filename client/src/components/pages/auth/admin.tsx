@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Component, ChangeEvent, SyntheticEvent } from "react";
+import { Component, SyntheticEvent } from "react";
 import { Unsubscribe } from "redux";
 import { store } from "../../redux/store";
 import { VacsModel } from "../../models/vacs-model";
@@ -51,10 +51,7 @@ export class Admin extends Component<any, AdminState> {
       toast.error(err.message);
     }
   }
-  public editVac = (args: SyntheticEvent) => {
-    const id = +(args.target as HTMLInputElement).value;
-    toast.error(id);
-  };
+
   public deleteVac = (args: SyntheticEvent) => {
     const id = +(args.target as HTMLInputElement).value;
     toast.error(id);
@@ -66,9 +63,8 @@ export class Admin extends Component<any, AdminState> {
       },
       body: ""
     };
-    // toast.warn(JSON.stringify(options));
     fetch(`http://localhost:${PORT}/api/vacations/${id}`, options)
-      .then(vacation => toast.error("vacation " + id + " has been deleted."))
+      .then(vacation => toast.warn("vacation " + id + " has been deleted."))
       .catch(err => toast.error(err.message));
   };
   public render() {
@@ -104,12 +100,11 @@ export class Admin extends Component<any, AdminState> {
                 <td>{v.endDate}</td>
                 <td>{v.picFileName}</td>
                 <td className="info">
-                  <NavLink className="nav-link" to="/edit-vacation/">
-                    <input
-                      type="checkbox"
-                      onClick={this.editVac}
-                      value={v.vacationID}
-                    />
+                  <NavLink
+                    className="nav-link"
+                    to={`/edit-vacation/${v.vacationID}`}
+                  >
+                    <input type="checkbox" value={v.vacationID} />
                   </NavLink>
                 </td>
                 <td className="danger">

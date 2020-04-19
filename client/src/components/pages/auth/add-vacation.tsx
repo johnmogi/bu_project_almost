@@ -1,14 +1,9 @@
 import React, { Component, ChangeEvent } from "react";
-import axios from "axios";
-
 import "./add-vacation.css";
-
 import { newFileVacModel } from "../../models/new-file-model";
-
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-
 import { toast } from "react-toastify";
 
 const PORT = process.env.PORT || 3012;
@@ -29,21 +24,18 @@ export class AddVacation extends Component<any, VacationsState> {
 
   private setDestination = (args: ChangeEvent<HTMLInputElement>) => {
     const destination = args.target.value;
-    // toast.info(destination);
     const vacation = { ...this.state.vacation };
     vacation.destination = destination;
     this.setState({ vacation });
   };
   private setDescription = (args: ChangeEvent<HTMLInputElement>) => {
     const description = args.target.value;
-    // toast.info(description);
     const vacation = { ...this.state.vacation };
     vacation.description = description;
     this.setState({ vacation });
   };
 
   private setPicture = (args: ChangeEvent<HTMLInputElement>) => {
-    // private setPicture = (event: any) => {
     const imageFileUpload = args.target.files[0];
     const vacation = { ...this.state.vacation };
     vacation.imageFileUpload = imageFileUpload;
@@ -57,12 +49,12 @@ export class AddVacation extends Component<any, VacationsState> {
       const formData = new FormData();
       formData.append("image", vacation.imageFileUpload);
 
-      const optionsImg = {
+      const options = {
         method: "POST",
         body: formData
       };
 
-      fetch(`http://localhost:${PORT}/api/auth/file`, optionsImg)
+      fetch(`http://localhost:${PORT}/api/auth/file`, options)
         .then(res => res.json())
         .then(image => resolve(image))
         .catch(err => reject(err));
@@ -71,31 +63,23 @@ export class AddVacation extends Component<any, VacationsState> {
 
   private setStartDate = (args: ChangeEvent<HTMLInputElement>) => {
     const startDate = args.target.value;
-    // toast.info(startDate);
     const vacation = { ...this.state.vacation };
     vacation.startDate = startDate;
     this.setState({ vacation });
   };
   private setEndDate = (args: ChangeEvent<HTMLInputElement>) => {
     const endDate = args.target.value;
-    // toast.info(endDate);
     const vacation = { ...this.state.vacation };
     vacation.endDate = endDate;
     this.setState({ vacation });
   };
   private setPrice = (args: ChangeEvent<HTMLInputElement>) => {
     const price = args.target.value;
-    // toast.info(price);
     const vacation = { ...this.state.vacation };
     vacation.price = price;
     this.setState({ vacation });
   };
   private validateForm = async () => {
-    if (!this.state.vacation.imageFileUpload) {
-      toast.error("no pic");
-      return;
-    }
-
     if (
       !this.state.vacation.description ||
       !this.state.vacation.destination ||
@@ -111,23 +95,30 @@ export class AddVacation extends Component<any, VacationsState> {
     }
 
     await this.imageUpload();
-    // toast("Vacation has been added");
     await this.addVacForm();
   };
 
   private addVacForm = async () => {
-    const myFormData = new FormData();
-    myFormData.append("destination", this.state.vacation.destination);
-    myFormData.append("description", this.state.vacation.description);
-    myFormData.append("price", this.state.vacation.price.toString());
-    myFormData.append("startDate", this.state.vacation.startDate.toString());
-    myFormData.append("endDate", this.state.vacation.endDate.toString());
-    myFormData.append("picFileName", this.state.vacation.imageFileUpload.name);
-
-    const response = await axios.post<newFileVacModel>(
-      "http://localhost:3012/api/vacations",
-      myFormData
-    );
+    const sendNewVacation = {
+      description: this.state.vacation.description,
+      destination: this.state.vacation.destination,
+      picFileName: this.state.vacation.picFileName,
+      startDate: this.state.vacation.startDate,
+      endDate: this.state.vacation.endDate,
+      price: this.state.vacation.price
+    };
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify(sendNewVacation)
+    };
+    fetch(`http://localhost:${PORT}/api/vacations`, options)
+      .then(vacation => toast.success("successfully added vacation" + vacation))
+      .catch(err => toast.error(err.message));
+    console.log(options);
   };
 
   render() {

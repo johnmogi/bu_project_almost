@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 3012;
 interface VacationsState {
   vacation: VacsModel;
   user: UserModel;
-  previewImage: string;
+  vac: VacsModel[];
 }
 
 export class EditVacation extends Component<any, VacationsState> {
@@ -33,7 +33,7 @@ export class EditVacation extends Component<any, VacationsState> {
     this.state = {
       vacation: new VacsModel(),
       user: store.getState().user,
-      previewImage: ""
+      vac: []
     };
     this.unsubscribe = store.subscribe(() => {
       this.setState({ user: store.getState().user });
@@ -48,7 +48,7 @@ export class EditVacation extends Component<any, VacationsState> {
     try {
       fetch(`http://localhost:${PORT}/api/vacations/${id}`)
         .then(res => res.json())
-        .then(vacation => this.setState({ vacation }))
+        .then(vac => this.setState({ vac }))
         .catch(err => toast.error(err.message));
     } catch (err) {
       toast.error(err.message);
@@ -56,21 +56,18 @@ export class EditVacation extends Component<any, VacationsState> {
   }
   private setDestination = (args: ChangeEvent<HTMLInputElement>) => {
     const destination = args.target.value;
-    // toast.info(destination);
     const vacation = { ...this.state.vacation };
     vacation.destination = destination;
     this.setState({ vacation });
   };
   private setDescription = (args: ChangeEvent<HTMLInputElement>) => {
     const description = args.target.value;
-    // toast.info(description);
     const vacation = { ...this.state.vacation };
     vacation.description = description;
     this.setState({ vacation });
   };
 
   private setPicture = (args: ChangeEvent<HTMLInputElement>) => {
-    // private setPicture = (event: any) => {
     const picFileName = args.target.files[0];
     const vacation = { ...this.state.vacation };
     vacation.picFileName = picFileName;
@@ -97,28 +94,25 @@ export class EditVacation extends Component<any, VacationsState> {
 
   private setStartDate = (args: ChangeEvent<HTMLInputElement>) => {
     const startDate = args.target.value;
-    // toast.info(startDate);
     const vacation = { ...this.state.vacation };
     vacation.startDate = startDate;
     this.setState({ vacation });
   };
   private setEndDate = (args: ChangeEvent<HTMLInputElement>) => {
     const endDate = args.target.value;
-    // toast.info(endDate);
     const vacation = { ...this.state.vacation };
     vacation.endDate = endDate;
     this.setState({ vacation });
   };
   private setPrice = (args: ChangeEvent<HTMLInputElement>) => {
     const price = args.target.value;
-    // toast.info(price);
     const vacation = { ...this.state.vacation };
     vacation.price = price;
     this.setState({ vacation });
   };
   private validateForm = async () => {
     if (!this.state.vacation.picFileName) {
-      toast.error("no pic");
+      toast.error("image is missing, try again");
       return;
     }
 
@@ -137,7 +131,6 @@ export class EditVacation extends Component<any, VacationsState> {
     }
 
     await this.imageUpload();
-    // toast("Vacation has been added");
     await this.addVacForm();
   };
 
@@ -150,8 +143,8 @@ export class EditVacation extends Component<any, VacationsState> {
     myFormData.append("endDate", this.state.vacation.endDate.toString());
     myFormData.append("picFileName", this.state.vacation.picFileName);
 
-    const response = await axios.post<newFileVacModel>(
-      "http://localhost:3012/api/vacations",
+    await axios.post<newFileVacModel>(
+      `http://localhost:${PORT}/api/vacations`,
       myFormData
     );
   };
@@ -172,70 +165,70 @@ export class EditVacation extends Component<any, VacationsState> {
               <th>Add</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>
-                <Form.Control
-                  type="text"
-                  placeholder="Vacation Name"
-                  onChange={this.setDestination}
-                />
-              </td>
-              <td>
-                <Form.Group controlId="exampleForm.ControlTextarea1">
+          {this.state.vac.map(v => (
+            <tbody>
+              <tr>
+                <td>
                   <Form.Control
-                    as="textarea"
-                    required
-                    rows="1"
-                    placeholder="Enter Vacation Description"
-                    onChange={this.setDescription}
+                    type="text"
+                    placeholder={v.destination}
+                    onChange={this.setDestination}
                   />
-                </Form.Group>
-              </td>
-              <td>
-                <Form.Control
-                  type="text"
-                  required
-                  placeholder="Vacation Price"
-                  onChange={this.setPrice}
-                />
-              </td>
-              <td>
-                <Form.Control
-                  type="date"
-                  required
-                  placeholder="Start Date"
-                  onChange={this.setStartDate}
-                />
-              </td>
-              <td>
-                <Form.Control
-                  type="date"
-                  required
-                  placeholder="End Date"
-                  onChange={this.setEndDate}
-                />
-              </td>
-              <td>
-                <input
-                  type="file"
-                  required
-                  placeholder="image-name"
-                  onChange={this.setPicture}
-                  accept="image/*"
-                  ref={fi => (this.fileInput = fi)}
-                />
-                <button type="button" onClick={() => this.fileInput.click()}>
-                  Select Product Image
-                </button>
-              </td>
-              <td>
-                <Button variant="outline-success" onClick={this.validateForm}>
-                  Add Vacation
-                </Button>
-              </td>
-            </tr>
-          </tbody>
+                </td>
+                <td>
+                  <Form.Group controlId="exampleForm.ControlTextarea1">
+                    <Form.Control
+                      as="textarea"
+                      required
+                      rows="1"
+                      placeholder={v.description}
+                      onChange={this.setDescription}
+                    />
+                  </Form.Group>
+                </td>
+                <td>
+                  <Form.Control
+                    type="text"
+                    required
+                    placeholder={v.price}
+                    onChange={this.setPrice}
+                  />
+                </td>
+                <td>
+                  <Form.Control
+                    type="date"
+                    required
+                    onChange={this.setStartDate}
+                  />
+                </td>
+                <td>
+                  <Form.Control
+                    type="date"
+                    required
+                    onChange={this.setEndDate}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="file"
+                    required
+                    onChange={this.setPicture}
+                    accept="image/*"
+                    ref={fi => (this.fileInput = fi)}
+                  />
+
+                  <button type="button" onClick={() => this.fileInput.click()}>
+                    Select Product Image
+                  </button>
+                </td>
+                <td>
+                  <Button variant="outline-success" onClick={this.validateForm}>
+                    Save Vacation
+                  </Button>
+                </td>
+              </tr>
+            </tbody>
+          ))}
         </Table>
       </div>
     );

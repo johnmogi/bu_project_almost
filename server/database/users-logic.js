@@ -8,7 +8,6 @@ async function getAllUsersAsync() {
 async function getOneUserAsync(credentials) {
   const sql = `SELECT * FROM users WHERE userName = '${credentials.userName}' AND password = '${credentials.password}'`;
   const user = await dal.executeAsync(sql);
-  // recheck if this is required:
   if (user.length === 0) {
     return 0;
   }
@@ -16,21 +15,13 @@ async function getOneUserAsync(credentials) {
 }
 
 async function addUserAsync(user) {
-  // const checkAvailableUserName = `SELECT * from users WHERE userName = '${user.userName}'`;
-  // const runCheck = await dal.executeAsync(checkAvailableUserName);
-  // if (runCheck.length != 0) {
-  //   return 0;
-  // }
   const sql = `INSERT INTO users ( firstName, lastName, userName, password,role,  isAdmin) VALUES('${user.firstName}','${user.lastName}','${user.userName}','${user.password}',"User",0)`;
   const info = await dal.executeAsync(sql);
-
   user.id = info.insertId;
   return user;
 }
 
 async function addUserFollowAsync(user) {
-  //take values and see if user is following the vacation:
-
   const sql = `INSERT INTO followers (userID, vacationID) VALUES (${user.userID}, ${user.vacationID})`;
   const vac = await dal.executeAsync(sql);
   return vac;
@@ -42,19 +33,18 @@ async function getAllFollowersAsync() {
   return followers;
 }
 async function addFollowVacForUser(vacationID, userID) {
-  console.log(vacationID, userID);
-  const sql = `INSERT INTO followers (userID,vacationID) VALUES (${userID}, ${vacationID})`;
+  const sql = `INSERT INTO followers (vacationID, userID) VALUES ( ${vacationID}, ${userID})`;
   const vacation = await dal.executeAsync(sql);
   return vacation;
 }
-async function getAllFollowedVacssAsync(id) {
+async function getAllFollowedVacsAsync(id) {
   const sql = `SELECT * FROM followers WHERE userID = ${id}`;
   const followed = await dal.executeAsync(sql);
   return followed;
 }
 async function removeFollowedVac(id, vac) {
   const sql = `DELETE FROM followers WHERE userID = ${id} and vacationID = ${vac}`;
-  // return sql;
+  return sql;
 }
 
 module.exports = {
@@ -64,6 +54,6 @@ module.exports = {
   addUserFollowAsync,
   getAllFollowersAsync,
   addFollowVacForUser,
-  getAllFollowedVacssAsync,
+  getAllFollowedVacsAsync,
   removeFollowedVac
 };

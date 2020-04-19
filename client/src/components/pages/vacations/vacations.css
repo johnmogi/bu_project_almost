@@ -12,3 +12,14 @@
   overflow: hidden;
   background-color: papayawhip;
 }
+.mask {
+  background: #e9ecef;
+  min-height: 250px;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.card-text {
+  margin-top: 5px;
+  max-height: 115px;
+  overflow: overlay;
+}

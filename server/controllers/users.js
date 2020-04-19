@@ -1,4 +1,3 @@
-// const logic = require("../logic");
 const express = require("express");
 const usersLogic = require("../database/users-logic");
 const router = express.Router();
@@ -12,7 +11,7 @@ router.get("/users", async (request, response) => {
     response.status(500).send(err.message);
   }
 });
-// GET http://localhost:3000/api/auth/users/1
+
 router.get("/users/:id", async (request, response) => {
   try {
     const id = +request.params.id;
@@ -26,11 +25,7 @@ router.get("/users/:id", async (request, response) => {
 router.post("/register", async (request, response) => {
   try {
     const user = request.body;
-    // if (request.body.length === undefined || request.body === {}) {
-    //   throw "missing details please check again";
-    // }
     const newUser = await usersLogic.addUserAsync(user);
-    console.log(newUser);
     if (newUser === 0) {
       throw "User name already exists";
     }
@@ -45,10 +40,10 @@ router.post("/register", async (request, response) => {
       .send(error.message);
   }
 });
+
 router.post("/login", async (request, response) => {
   try {
     const credentials = request.body;
-    // console.log(credentials);
     if (!credentials.userName || !credentials.password) {
       response.status(401).send("Missing username or password, Try Again");
       return;
@@ -86,61 +81,37 @@ router.get("/followers", async (request, response) => {
     response.status(500).send(err.message);
   }
 });
-router.get("/followed-vacs/:id", async (request, response) => {
-  const id = +request.params.id
+
+router.get("/follow/:id", async (request, response) => {
   try {
-    const followed = await usersLogic.getAllFollowedVacssAsync(id);
-    response.json(followed);
-  } catch (err) {
-    response.status(500).send(err.message);
+    const id = +request.params.id;
+    const vacs = await usersLogic.getAllFollowedVacsAsync(id);
+    console.log(vacs);
+    const vacsFollowedArr = [];
+    for (let i = 0; i < vacs.length; i++) {
+      vacsFollowedArr.push(vacs[i].vacationID);
+    }
+    response.json(vacs);
+  } catch (error) {
+    response.status(500).send(error);
   }
 });
 router.post("/follow/", async (request, response) => {
   try {
-    const userID = +request.body.userID
-    const vacationID = +request.body.vacationID
-
+    const userID = +request.body.userID;
+    const vacationID = +request.body.vacationID;
     const followed = await usersLogic.addFollowVacForUser(vacationID, userID);
     response.json(followed);
   } catch (err) {
     response.status(500).send(err.message);
   }
 });
-
-
-// router.post("/follow/:vacationID/:id", async (request, response) => {
-//   try {
-//     const id = +request.params.id;
-//     const vacation = +request.params.vacationID;
-//     const getUser = await usersLogic.getFollowedVacs(vacation, id);
-//     response.json(getUser);
-//   } catch (error) {
-//     response.status(500).send(error);
-//   }
-// });
-
-router.get("/follow/:id", async (request, response) => {
-  try {
-    const id = request.params.id;
-    const vacs = await usersLogic.getFollowedVacs(id);
-    const vacsFollowedArr = [];
-    // sending only followed vacs to reorder on client:
-    for (let i = 0; i < vacs.length; i++) {
-      vacsFollowedArr.push(vacs[i].vacationID);
-    }
-
-    response.json(vacs);
-  } catch (error) {
-    response.status(500).send(error);
-  }
-});
-// remove followed vacation
 router.delete("/delete/:userID/:vacationID", async (request, response) => {
   try {
     const userID = +request.params.userID;
     const vacationID = +request.params.vacationID;
     await usersLogic.removeFollowedVac(userID, vacationID);
-    response.sendStatus(204).send("deleted, also delete this message");
+    response.sendStatus(204).send("deleted, also deleted this message");
   } catch (error) {
     response.status(500).send(error);
   }
